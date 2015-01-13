@@ -27,8 +27,8 @@
 ;;              Voir poly cours 2, page 32, EnumRat
 (define Enum (lambda (n)
   (let* (
-        [x+y (Enum-max n)]
-        [x (Enum-x x+y n)])
+        (x+y (Enum-max n))
+        (x (Enum-x x+y n))
     (cons x (- x+y x)))))
 
 
@@ -79,7 +79,7 @@
 
 ;; ================================================================
 ;;
-;; Exercice 2
+;; Exercice 3
 
 
 ;; RangList :: [N] (length = 2) -> N
@@ -96,5 +96,8 @@
   (RangList (map char->integer (string->list s)))))
 
 
-(string->list "0")
+;; ================================================================
+;;
+;; Exercice 4
+
 (time (RangString "+++++++++++++++++"))
