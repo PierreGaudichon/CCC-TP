@@ -1,5 +1,5 @@
 ;; TP 1
-;; Cyril Leconte & Pierre Gaudichon
+;; Pierre Gaudichon & Etnocel
 
 
 ;; ================================================================
