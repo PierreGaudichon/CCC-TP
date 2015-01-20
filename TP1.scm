@@ -93,20 +93,20 @@
 ;;              l               -> Rang de cantor du n-uplet.
 (define RangList (lambda (l)
   (if (null? l) 
-       0
+       2
        (Rang (car l) (RangList (cdr l))))))
 
 
-;; EnumList :: N x N -> [N] (length = l)
-;;             n , l -> Liste de longeur l correspondant au nombre n.
+;; EnumList :: N -> [N] (length = l)
+;;             n -> Liste correspondant au nombre n.
 (define EnumList (lambda (n)
-  (if (= n 0)
+  (if (= n 2)
       null
       (let* (
              (enum (Enum n))
              (x (car enum))
              (y (cdr enum)))
-       (cons x (EnumList y))))))  
+       (cons x (EnumList y))))))
 
 
 ;; RangString :: String -> N
@@ -114,11 +114,12 @@
 (define RangString (lambda (s)
   (RangList (map char->integer (string->list s)))))
 
+(define EnumString (lambda (n)
+  (list->string (map integer->char (EnumList n)))))
+
 
 ;; ================================================================
 ;;
 ;; Exercice 4
 
-(time (RangString " "))
-(EnumList 150000)
-(RangList (list 122 19 3))
+(time (EnumString (RangString "ad")))
