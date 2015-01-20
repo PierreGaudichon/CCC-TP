@@ -10,6 +10,7 @@
 
 ;; Rang :: N x N -> N
 ;;         x , y -> Rang de cantor du couple (x . y)
+;;                  (x+y)(x+y+1)/2 + x
 (define Rang (lambda (x y)
   (+ (/ (* (+ x y) (+ x y 1)) 2) x)))
 
@@ -28,7 +29,7 @@
 (define Enum (lambda (n)
   (let* (
         (x+y (Enum-max n))
-        (x (Enum-x x+y n))
+        (x (Enum-x x+y n)))
     (cons x (- x+y x)))))
 
 
@@ -68,13 +69,19 @@
 ;; RangTriplet :: N x N x N -> N
 ;;                x , y , z -> Le rang de cantor de x y et z.
 (define RangTriplet (lambda (x y z)
-  (Rang (Rang x y) z)))
+  (Rang x (Rang y z))))
 
 
 ;; Enumtriplet :: N -> '(N N N)
 ;;                n -> Rang de cantor d'un triplet.
 (define EnumTriplet (lambda (n)
-  0))
+  (let* ( 
+      (doublet (Enum n))
+      (x (car doublet))
+      (right (Enum (cdr doublet)))
+      (y (car right))
+      (z (cdr right)))
+    (list x y z))))
 
 
 ;; ================================================================
@@ -83,11 +90,23 @@
 
 
 ;; RangList :: [N] (length = 2) -> N
-;;              l               -> rang de cantor du n-uplet.
+;;              l               -> Rang de cantor du n-uplet.
 (define RangList (lambda (l)
-  (if (= (length l) 2)
-      (Rang (car l) (cadr l))
-      (Rang (car l) (RangList (cdr l))))))
+  (if (null? l) 
+       0
+       (Rang (car l) (RangList (cdr l))))))
+
+
+;; EnumList :: N x N -> [N] (length = l)
+;;             n , l -> Liste de longeur l correspondant au nombre n.
+(define EnumList (lambda (n)
+  (if (= n 0)
+      null
+      (let* (
+             (enum (Enum n))
+             (x (car enum))
+             (y (cdr enum)))
+       (cons x (EnumList y))))))  
 
 
 ;; RangString :: String -> N
@@ -100,4 +119,6 @@
 ;;
 ;; Exercice 4
 
-(time (RangString "+++++++++++++++++"))
+(time (RangString " "))
+(EnumList 150000)
+(RangList (list 122 19 3))
