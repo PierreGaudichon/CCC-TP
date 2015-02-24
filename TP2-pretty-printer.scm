@@ -1,19 +1,48 @@
-;; TP 2
-;; Pierre Gaudichon & Etnocel
+;; TP 2 - Pretty Printer
+;; Pierre Gaudichon & Cyril Leconte
+
+
+;; Intro
+
+;; Le but était de créer un programme qui, à partir de la syntaxe d'un
+;; programme rends la même syntaxe mais plus lisible (selon des normes
+;; définies).
+
+
+;; Conclusion
+
+;; Nous avons rencontré quelques difficultées :
+;; 
+;; - mettre les points-virgules en fin de ligne.
+;; - `pretty-print` ne peut pas être modifié dans Racket.
+
+
+
+;; (I) Imports
+;; ----------------------------------------------------------------------------
 
 (load "test.ss")
 (load "ccc.ss")
 
+
+
+;; ----------------------------------------------------------------------------
+;; (II) Preparation Tests
+
 (define show-all-tests #f)
 
 
+
+;; ----------------------------------------------------------------------------
+;; (III) Indentation
+
 ;; default-indent :: Int
-;;                ::  a
-;; Default indentation for output programm. `a` is the number of space.
+;; Default indentation for output programm. With the number of space.
 (define indent-default 1)
 
 
 ;; indent-search :: context-name x [indent-spec] ->  Integer
+;;                  context-name ,  indent-spec
 ;; Searches a list of indentation specifications.
 (define indents-search (lambda (context-name indents-spec)
   (let (
@@ -24,13 +53,18 @@
 
 
 ;; make-indent :: Int -> String
-;;                 a  -> String (length = a) composed of whitespace
+;; String (length = a) composed of whitespace
 (define make-indent (lambda (a)
  (make-string a #\space)))
 
 
+
+;; ----------------------------------------------------------------------------
+;; (IV) String Appends
+
 ;; append-string-before-all :: String x [String] -> [String]
-;;                                b   ,    s     -> Append b before each string from l.
+;;                                b   ,    s     
+;; Append b before each string from l.
 (define append-string-before-all (lambda (b l)
   (map 
     (lambda (s)
@@ -39,7 +73,8 @@
 
 
 ;; append-string-after-all :: String x [String] -> [String]
-;;                                b   ,    s     -> Append b after each string from l.
+;;                                b   ,    s
+;; Append b after each string from l.
 (define append-string-after-all (lambda (b l)
   (map 
     (lambda (s)
@@ -48,15 +83,21 @@
 
 
 ;; append-string-after-all-butt-the-last-bitch :: String x [String] -> [String]
-;;                                                  b    ,   l      -> Sefl-explanatory.
+;;                                                  b    ,   l
+;; Sefl-explanatory.
 (define append-string-after-all-butt-the-last-bitch (lambda (b l)
   (if (<= (length l) 1)
     l
     (cons (string-append (car l) b) (append-string-after-all-butt-the-last-bitch b (cdr l))))))
 
 
+
+;; ----------------------------------------------------------------------------
+;; (V) Pretty Prints
+
 ;; pretty-print-expr :: expr x [indent-spec] -> String
-;;                       e   ,      s        -> 
+;;                       e   ,      s
+;; Pretty print an expression, return a string for that expression.
 (define pretty-print-expr (lambda (e s) (cond
   ((NIL? e)  "nil")
   ((CST? e)  (CST->name e))
@@ -68,7 +109,8 @@
 
 
 ;; pretty-print-command :: command x [indent-spec] -> [String]
-;;                          c      ,       s       ->
+;;                          c      ,       s
+;; Pretty print a command and return a list of lines (String).
 (define pretty-print-command (lambda (c s)
   (cond
     ((NOP? c) (list "nop"))
@@ -90,7 +132,8 @@
 
 
 ;; pretty-print-commands :: [command] x [indent-spec] -> [String]
-;;                             cs     ,     s         ->
+;;                             cs     ,     s
+;; Pretty print some commands and return a list of lines (String).
 (define pretty-print-commands (lambda (cs s)
   (cond
     ((null? cs)
@@ -106,16 +149,24 @@
       
 
 ;; pretty-print-in :: [Var] x [indent-spec] -> String
+;;                     vs   ,        s
+;; Pretty print the list of variables names, basically `vs.join(", ")`.
 (define pretty-print-in (lambda (vs s)
   (cond 
     ((null? vs) "")
     ((= (length vs) 1) (VAR->name (car vs)))
     (else (string-append (VAR->name (car vs)) ", " (pretty-print-in (cdr vs) s))))))
 
+
+;; pretty-print-out :: [Var] x [indent-spec] -> String
+;;                     vs   ,        s
+;; Pretty print the list of variables names, basically `vs.join(", ")`.
 (define pretty-print-out pretty-print-in)
 
 
 ;; pretty-print-progr :: Progr x [indent-spec] -> [String]
+;;                       progr ,       s
+;; Pretty print all the programm, return a list of lines (String).
 (define pretty-print-progr (lambda (progr s)
   (append
    (list (string-append "read " (pretty-print-in (PROGR->in progr) s)) "%")
@@ -123,6 +174,12 @@
    (list "%" (string-append "write " (pretty-print-out (PROGR->out progr) s))))))
 
 
+
+;; ----------------------------------------------------------------------------
+;; (VI) Final
+
 ;; pretty-print :: Progr x [indent-spec] -> String
+;;                 progr ,       s
+;; Pretty print the programm. From a AST to a string.
 (define pretty-printer (lambda (progr . s)
   (apply string-append (append-string-after-all-butt-the-last-bitch "\n" (pretty-print-progr progr s)))))
