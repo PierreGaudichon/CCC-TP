@@ -1,3 +1,6 @@
+;; TP 2
+;; Pierre Gaudichon & Etnocel
+
 (load "test.ss")
 (load "ccc.ss")
 
