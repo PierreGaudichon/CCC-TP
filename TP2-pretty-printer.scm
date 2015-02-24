@@ -20,6 +20,8 @@
 
 ;; (I) Imports
 ;; ----------------------------------------------------------------------------
+;; Load tests from local folder. 
+;; Other sources can be found at : https://github.com/PierreGaudichon/CCC-TP
 
 (load "test.ss")
 (load "ccc.ss")
