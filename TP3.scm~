@@ -1,0 +1,8 @@
+(define lookup (lambda(a l)
+  (cond 
+    ((null? l) '())
+    ((= (caar l) a) (cdar l))
+    (else (lookup a (cdr l))))))
+
+
+
