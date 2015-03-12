@@ -34,6 +34,7 @@
 (display "EVAL ")
 (test (EVAL (EQ (EQ NIL NIL) NIL) trucmuche) NIL)
 (test (EVAL (EQ (EQ (CST "truc") NIL) NIL) trucmuche) (CONS NIL NIL))
+(test (EVAL (HD (CONS (CST "a") (CST "b"))) '()) (CST "a"))
 (test (EVAL (HD (CONS (VAR "truc") (VAR "muche"))) trucmuche) 
       (CST "truc"))
 
@@ -142,3 +143,17 @@
 (test (EXEC rreverse (list (CONS (CST "truc") (CONS (CST "muche") NIL)))) 
       (list (CONS (CST "muche") (CONS (CST "truc") NIL))))
 
+
+(display "custom tests")
+(test
+  (EXEC
+    (PROGR
+      '()
+      (list
+        (WHILE NIL
+          (list 
+            (SET (VAR "x") (CST "a")))))
+      (list (VAR "x")))
+    '())
+  ;(list (CST "a")))
+  '())
